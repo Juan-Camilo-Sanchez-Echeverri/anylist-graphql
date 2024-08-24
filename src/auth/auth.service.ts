@@ -3,7 +3,7 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 import { LoginInput, SignupInput } from './dto/inputs';
 import { AuthResponse } from './types/auth-response.type';
