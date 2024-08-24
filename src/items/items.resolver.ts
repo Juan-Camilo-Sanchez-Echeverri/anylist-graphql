@@ -9,6 +9,7 @@ import { User } from '../users/entities/user.entity';
 
 import { CreateItemInput, UpdateItemInput } from './dto/inputs/';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { PaginationArgs, SearchArgs } from '../common/dto/args';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Item)
@@ -24,31 +25,39 @@ export class ItemsResolver {
   }
 
   @Query(() => [Item], { name: 'items' })
-  async findAll(@CurrentUser() user: User): Promise<Item[]> {
-    return await this.itemsService.findAll(user);
+  async findAll(
+    @CurrentUser() user: User,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs,
+  ): Promise<Item[]> {
+    return await this.itemsService.findAll(user, paginationArgs, searchArgs);
   }
 
   @Query(() => Item, { name: 'item' })
   async findOne(
     @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<Item> {
-    return await this.itemsService.findOne(id,user);
+    return await this.itemsService.findOne(id, user);
   }
 
   @Mutation(() => Item)
   async updateItem(
     @Args('updateItemInput') updateItemInput: UpdateItemInput,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<Item> {
-    return await this.itemsService.update(updateItemInput.id, updateItemInput,user);
+    return await this.itemsService.update(
+      updateItemInput.id,
+      updateItemInput,
+      user,
+    );
   }
 
   @Mutation(() => Item)
   async removeItem(
     @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<Item> {
-    return await this.itemsService.remove(id,user);
+    return await this.itemsService.remove(id, user);
   }
 }
